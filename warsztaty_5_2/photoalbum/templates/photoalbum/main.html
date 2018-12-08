@@ -1,5 +1,33 @@
 {% extends "photoalbum/base.html" %}
+{% load crispy_forms_tags %}
 {% load photoalbum.extras %}
 {% block content %}
-    <h1>twenty one pilots Heathens</h1>
+        <div class="content-section">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <label class="border-bottom mb-4">Dodaj zdjęcie</label>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Zatwierdź</button>
+            </div>
+        </form>
+    </div>
+        {% for photo in photos %}
+        <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ photo.user.profile.image.url }}">
+          <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ photo.user }}</a>
+                <small class="text-muted">{{ photo.creation_date|date:"F d, Y" }} </small>
+            </div>
+              <img class="img-fluid" src="media/{{ photo.path }}">
+                <a class="article-title" href="#">
+                    <p class="article-content">{{ photo.content }}</p>
+                </a>
+{#              <small class="text-muted">Ilość komentarzy: {{ photo|count_comments }}</small>#}
+          </div>
+        </article>
+    {% endfor %}
 {% endblock content %}
