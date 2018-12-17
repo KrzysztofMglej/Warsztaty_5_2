@@ -3,15 +3,32 @@ from django.views import View
 from django.views.generic import ListView, FormView, CreateView, DeleteView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views, login, authenticate
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, LoginForm
 from .models import User
 
 
-class LoginUserView(auth_views.LoginView):
-    template_name = "users/login.html"
+class LoginUserView(View):
+
+    def get(self, request):
+        form = LoginForm
+        return render(request, 'users/login.html', {'form': form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            username = User.objects.filter(email=email.lower())[0]
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('main')
+            else:
+                messages.error(request, 'Błędny login lub hasło')
+        return render(request, 'users/login.html', {'form': form})
 
 
 class LogoutUserView(auth_views.LogoutView):
@@ -23,7 +40,7 @@ class RegisterUserView(View):
 
     def get(self, request):
         form = self.form_class()
-        return render(request, "users/register.html", locals())
+        return render(request, "users/register.html", {'form': form})
 
     def post(self, request):
         form = self.form_class(request.POST)

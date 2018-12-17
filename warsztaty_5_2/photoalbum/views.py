@@ -27,3 +27,4 @@ class HomeView(View):
             added_photo = Photo.objects.create(content=content, user=user, path=photo)
             added_photo.save()
         return render(request, "photoalbum/main.html", locals())
+

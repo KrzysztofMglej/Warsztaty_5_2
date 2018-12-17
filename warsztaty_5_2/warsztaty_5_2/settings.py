@@ -127,8 +127,6 @@ STATIC_URL = '/static/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-AUTH_USER_MODEL = 'users.User'
-
 LOGIN_REDIRECT_URL = 'main'
 LOGIN_URL = 'login'
 
