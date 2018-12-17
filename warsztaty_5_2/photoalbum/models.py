@@ -12,14 +12,14 @@ class Photo(models.Model):
     def __str__(self):
         return f'{self.user} Profile'
 
-    # def save(self, force_insert=False, force_update=False, using=None,
-    #          update_fields=None):
-    #     super().save()
-    #     img = Image.open(self.path.path)
-    #     if img.height > 300 or img.width > 300:
-    #         output_size = (300, 300)
-    #         img.thumbnail(output_size)
-    #         img.save(self.path.path)
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save()
+        img = Image.open(self.path.path)
+        if img.height > 600 or img.width > 600:
+            output_size = (600, 600)
+            img.thumbnail(output_size)
+            img.save(self.path.path)
 
 
 class Comments(models.Model):

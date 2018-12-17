@@ -15,7 +15,7 @@ class HomeView(View):
     def get(self, request):
         form = PhotoAddForm
         photos = Photo.objects.all()
-        return render(request, "photoalbum/main.html", locals())
+        return render(request, "photoalbum/main.html", {'form': form, 'photos': photos})
 
     def post(self, request):
         form = PhotoAddForm(request.POST, request.FILES)
