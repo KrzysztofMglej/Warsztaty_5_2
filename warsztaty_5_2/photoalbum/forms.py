@@ -6,4 +6,4 @@ class PhotoAddForm(forms.ModelForm):
 
     class Meta:
         model = Photo
-        exclude = ['creation_date', 'user']
+        exclude = ['creation_date', 'user', 'path_small']

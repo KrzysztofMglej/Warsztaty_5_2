@@ -1,12 +1,24 @@
 #!/usr/bin/python3.7
 from django import template
+from photoalbum.models import Photo, Likes, Comments
 
 register = template.Library()
 
 
-# @register.filter()
-# def first_signs(message):
-#     short_message = str(message)[0:30]
-#     if len(message) > 30:
-#         short_message += '...'
-#     return short_message
+@register.filter()
+def count_comments(photo):
+    comments = Comments.objects.filter(photo_id=photo.id)
+    return len(comments)
+
+
+@register.filter()
+def count_likes(photo):
+    likes = Likes.objects.filter(photo_id=photo.id)
+    return len(likes)
+
+
+@register.filter()
+def likes_id(photo):
+    likes = Likes.objects.filter(photo_id=photo.id)
+    list_id = likes.values_list('user_id', flat=True)
+    return list_id

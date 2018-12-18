@@ -97,6 +97,7 @@ class ChangePasswordView(LoginRequiredMixin, View):
 class ConfirmDeleteUserView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
     success_url = reverse_lazy("login")
+    template_name = 'users/user_confirm_delete.html'
 
     def test_func(self):
         user = self.get_object()
