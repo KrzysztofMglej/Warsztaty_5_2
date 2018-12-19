@@ -22,14 +22,12 @@
                     <a class="mr-2" href="#">{{ photo.user }}</a>
                     <small class="text-muted">{{ photo.creation_date|date:"F d, Y" }} </small>
                 </div>
-                <img class="img-fluid" src="media/{{ photo.path }}">
-                <form>
+                <img class="img-fluid" src="media/{{ photo.path }}"><br>
                 {% if not request.user.id in photo|likes_id %}
-                    <button class="btn btn-outline-info float-right" type="submit" name="button" value="like_btn">Polub</button>
+                    <a class="btn btn-outline-info float-right" href="{% url 'like' photo.id %}">Polub</a>
                 {% else %}
-                    <button class="btn btn-info float-right" type="submit" name="button" value="unlike_btn">Nie lubię</button>
+                    <a class="btn btn-info float-right" href="{% url 'like' photo.id %}">Nie lubię</a>
                 {% endif %}
-                </form>
                 <br><br>
                 <a class="article-title" href="#">
                     <p class="article-content">{{ photo.content }}</p>

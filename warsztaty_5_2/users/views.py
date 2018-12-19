@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, FormView, CreateView, DeleteView, DetailView
@@ -7,28 +8,27 @@ from django.contrib.auth import views as auth_views, login, authenticate
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, LoginForm
-from .models import User
 
 
 class LoginUserView(View):
+    form_class = LoginForm
 
     def get(self, request):
-        form = LoginForm
-        return render(request, 'users/login.html', {'form': form})
+        return render(request, 'users/login.html', {'form': self.form_class})
 
     def post(self, request):
-        form = LoginForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            username = User.objects.filter(email=email.lower())[0]
+            username = User.objects.filter(email=email.lower()).first()
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('main')
             else:
-                messages.error(request, 'Błędny login lub hasło')
-        return render(request, 'users/login.html', {'form': form})
+                messages.warning(request, 'Błędny login lub hasło')
+        return render(request, 'users/login.html', {'form': self.form_class})
 
 
 class LogoutUserView(auth_views.LogoutView):

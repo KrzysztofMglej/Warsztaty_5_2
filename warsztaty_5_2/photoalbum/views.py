@@ -19,29 +19,50 @@ class HomeView(LoginRequiredMixin, View):
 
     def post(self, request):
         photos = Photo.objects.all().order_by('-creation_date')
-        button = request.POST.get('button')
-        if button == 'form_btn':
-            form = PhotoAddForm(request.POST, request.FILES)
-            user = self.request.user
-            if form.is_valid():
-                content = form.cleaned_data.get('content')
-                photo = form.cleaned_data.get('path')
-                added_photo = Photo.objects.create(content=content, user=user, path=photo)
-                added_photo.save()
-                messages.success(request, 'Dodano wpis')
-                return render(request, "photoalbum/main.html", {'form': self.class_form, 'photos': photos})
-            return render(request, "photoalbum/main.html", {'form': form, 'photos': photos})
-        else:
-            existing_like = Likes.objects.filter(user_id=request.user.id)
-            if existing_like:
-                if button == 'like_btn':
-                    existing_like[0].like = True
-                else:
-                    existing_like[0].like = False
+        form = PhotoAddForm(request.POST, request.FILES)
+        user = self.request.user
+        if form.is_valid():
+            content = form.cleaned_data.get('content')
+            photo = form.cleaned_data.get('path')
+            added_photo = Photo.objects.create(content=content, user=user, path=photo)
+            added_photo.save()
+            messages.success(request, 'Dodano wpis')
+            return render(request, "photoalbum/main.html", {'form': self.class_form, 'photos': photos})
+        return render(request, "photoalbum/main.html", {'form': form, 'photos': photos})
+        
+
+class LikeView(View):
+
+    def get(self, request, photo_id):
+        existing_like = Likes.objects.filter(user_id=request.user.id, photo_id=photo_id).first()
+        print(existing_like)
+        if existing_like:
+            if existing_like.like:
+                existing_like.like = False
             else:
-                # new_like = Likes.objects.create(like=True, photo_id=photo)
-                pass
-            #TODO brak rozwiązania problemu lików
+                existing_like.like = True
+            existing_like.save()
+        else:
+            new_like = Likes.objects.create(like=True, photo_id=photo_id, user_id=request.user.id)
+        return redirect('main')
 
-        return render(request, "photoalbum/main.html", {'form': self.class_form, 'photos': photos})
 
+class PhotoDetailView(LoginRequiredMixin, View):
+
+    def get(self, request, pk):
+        photo = get_object_or_404(Photo, pk=pk, deleted=False)
+        #TODO dokonczyc
+    #     form = CommentForm()
+    #     comments = Comments.objects.filter(tweet_id=tweet.id, deleted=False)
+    #     context = {'tweet': tweet, 'form': form, 'comments': comments}
+    #     return render(request, "cwirek/tweet_detail.html", context)
+    #
+    # def post(self, request, pk):
+    #     tweet = get_object_or_404(Tweet, pk=pk)
+    #     form = CommentForm(request.POST)
+    #     if form.is_valid():
+    #         content = form.cleaned_data.get('content')
+    #         comment = Comments(content=content, tweet=tweet, user=request.user)
+    #         comment.save()
+    #         messages.success(request, "Komentarz został dodany")
+    #     return redirect("tweet-detail", pk=pk)

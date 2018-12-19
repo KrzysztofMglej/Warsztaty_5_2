@@ -8,6 +8,7 @@ class Photo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     path = models.ImageField(upload_to='photos/')
     content = models.CharField(max_length=255)
+    deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user} Profile'
@@ -31,6 +32,7 @@ class Comments(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user} - {self.photo} >>> {self.content[0:30]}"
@@ -40,3 +42,7 @@ class Likes(models.Model):
     like = models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE)
+    deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} - {self.photo}: {self.like}"

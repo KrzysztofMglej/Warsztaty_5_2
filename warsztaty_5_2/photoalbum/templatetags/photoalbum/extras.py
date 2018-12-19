@@ -13,12 +13,13 @@ def count_comments(photo):
 
 @register.filter()
 def count_likes(photo):
-    likes = Likes.objects.filter(photo_id=photo.id)
+    likes = Likes.objects.filter(photo_id=photo.id, like=True)
     return len(likes)
 
 
 @register.filter()
 def likes_id(photo):
-    likes = Likes.objects.filter(photo_id=photo.id)
+    likes = Likes.objects.filter(photo_id=photo.id, like=True)
     list_id = likes.values_list('user_id', flat=True)
+    print(list_id)
     return list_id
