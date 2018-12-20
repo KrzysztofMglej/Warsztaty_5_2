@@ -1,0 +1,64 @@
+{% extends "photoalbum/base.html" %}
+{% load crispy_forms_tags %}
+{% load photoalbum.extras %}
+{% block content %}
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ photo.user.profile.image.url }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ photo.user }}</a>
+                <small class="text-muted">{{ photo.creation_date|date:"F d, Y" }} </small>
+            </div>
+            {% if tweet.user == user %}
+                <div>
+                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="#">Delete</a>
+                </div>
+            {% endif %}
+            <img class="img-fluid" src="{{ photo.path.url }}" alt="img"><br>
+            {% if not request.user.id in photo|likes_id %}
+                <a class="btn btn-outline-info float-right" href="{% url 'like' photo.id %}">Polub</a>
+            {% else %}
+                <a class="btn btn-info float-right" href="{% url 'like' photo.id %}">Nie lubię</a>
+            {% endif %}
+            <br><br>
+            <p class="article-content">{{ photo.content }}</p>
+            <small class="text-muted">Ilość komentarzy: {{ photo|count_comments }}</small><br>
+            <small class="text-muted">LIKE: {{ photo|count_likes }}</small>
+        </div>
+    </article>
+
+    <div class="content-section">
+        <form method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <label class="border-bottom mb-4">Dodaj komentarz</label>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Zatwierdź</button>
+            </div>
+        </form>
+    </div>
+    {% if comments %}
+{% for comment in comments %}
+    <article class="media content-section ml-5">
+        <img class="rounded-circle article-img" src="{{ comment.user.profile.image.url }}">
+
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ comment.user }}</a>
+                <small class="text-muted">{{ comment.creation_date|date:"F d, Y" }}</small>
+<!--{#                {% if comment.user == user %}#}-->
+<!--{#                    <div>#}-->
+<!--{#                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="#">Update</a>#}-->
+<!--{#                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="#">Delete</a>#}-->
+<!--{#                    </div>#}-->
+<!--{#                {% endif %}#}-->
+            </div>
+            <p class="article-content">{{ comment.content }}</p>
+        </div><br>
+
+    </article>
+        {% endfor %}
+    {% endif %}
+{% endblock content %}

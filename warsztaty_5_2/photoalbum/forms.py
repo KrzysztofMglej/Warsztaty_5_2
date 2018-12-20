@@ -1,9 +1,16 @@
 from django import forms
-from .models import Photo
+from .models import Photo, Comments
 
 
 class PhotoAddForm(forms.ModelForm):
 
     class Meta:
         model = Photo
-        exclude = ['creation_date', 'user', 'path_small']
+        fields = ['content', 'path']
+
+
+class CommentAddForm(forms.ModelForm):
+
+    class Meta:
+        model = Comments
+        fields = ['content']

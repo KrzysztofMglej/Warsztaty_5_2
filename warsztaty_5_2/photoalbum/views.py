@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .forms import PhotoAddForm
-from .models import Photo, Likes
+from .forms import PhotoAddForm, CommentAddForm
+from .models import Photo, Likes, Comments
 from django.views.generic import ListView, FormView, CreateView, DeleteView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
@@ -35,7 +35,6 @@ class LikeView(View):
 
     def get(self, request, photo_id):
         existing_like = Likes.objects.filter(user_id=request.user.id, photo_id=photo_id).first()
-        print(existing_like)
         if existing_like:
             if existing_like.like:
                 existing_like.like = False
@@ -48,21 +47,21 @@ class LikeView(View):
 
 
 class PhotoDetailView(LoginRequiredMixin, View):
+    class_form = CommentAddForm
 
-    def get(self, request, pk):
-        photo = get_object_or_404(Photo, pk=pk, deleted=False)
-        #TODO dokonczyc
-    #     form = CommentForm()
-    #     comments = Comments.objects.filter(tweet_id=tweet.id, deleted=False)
-    #     context = {'tweet': tweet, 'form': form, 'comments': comments}
-    #     return render(request, "cwirek/tweet_detail.html", context)
-    #
-    # def post(self, request, pk):
-    #     tweet = get_object_or_404(Tweet, pk=pk)
-    #     form = CommentForm(request.POST)
-    #     if form.is_valid():
-    #         content = form.cleaned_data.get('content')
-    #         comment = Comments(content=content, tweet=tweet, user=request.user)
-    #         comment.save()
-    #         messages.success(request, "Komentarz został dodany")
-    #     return redirect("tweet-detail", pk=pk)
+    def get(self, request, photo_id):
+        photo = get_object_or_404(Photo, pk=photo_id, deleted=False)
+        form = self.class_form()
+        comments = Comments.objects.filter(photo_id=photo.id, deleted=False)
+        context = {'photo': photo, 'form': form, 'comments': comments}
+        return render(request, "photoalbum/photo_detail.html", context)
+
+    def post(self, request, photo_id):
+        photo = get_object_or_404(Photo, pk=photo_id)
+        form = self.class_form(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data.get('content')
+            comment = Comments(content=content, photo=photo, user=request.user)
+            comment.save()
+            messages.success(request, "Komentarz został dodany")
+        return redirect("photo-detail", photo_id=photo_id)

@@ -21,5 +21,4 @@ def count_likes(photo):
 def likes_id(photo):
     likes = Likes.objects.filter(photo_id=photo.id, like=True)
     list_id = likes.values_list('user_id', flat=True)
-    print(list_id)
     return list_id

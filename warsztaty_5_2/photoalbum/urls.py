@@ -14,10 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import HomeView, LikeView
+from .views import HomeView, LikeView, PhotoDetailView
 
 urlpatterns = [
     path('', HomeView.as_view(), name='main'),
     path('like/<int:photo_id>/', LikeView.as_view(), name='like'),
+    path('photo/<int:photo_id>/', PhotoDetailView.as_view(), name='photo-detail'),
 
 ]
+#TODO user photos view
+# TODO klasy autoadmina i flagi
