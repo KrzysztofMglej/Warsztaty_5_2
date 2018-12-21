@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .forms import PhotoAddForm, CommentAddForm
@@ -65,3 +66,22 @@ class PhotoDetailView(LoginRequiredMixin, View):
             comment.save()
             messages.success(request, "Komentarz został dodany")
         return redirect("photo-detail", photo_id=photo_id)
+
+
+class PhotoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Photo
+    success_url = reverse_lazy("main")
+
+    def test_func(self):
+        photo = self.get_object()
+        if self.request.user == photo.user:
+            return True
+        return False
+
+
+class UserPhotoListView(LoginRequiredMixin, View):
+
+    def get(self, request, id_user):
+        user = get_object_or_404(User, id=id_user)
+        photos = Photo.objects.filter(user_id=id_user, deleted=False).order_by('-creation_date')
+        return render(request, "photoalbum/user_photos.html", {'user_photo': user, 'photos': photos, 'id_user': id_user})

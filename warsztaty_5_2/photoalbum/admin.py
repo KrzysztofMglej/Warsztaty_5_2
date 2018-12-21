@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-from photoalbum.models import Comments, Photo, Likes
+from .models import Photo, Comments, Likes
 
 
 def content_display_thirty_signs(obj):

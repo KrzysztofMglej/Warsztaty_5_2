@@ -6,12 +6,12 @@
         <img class="rounded-circle article-img" src="{{ photo.user.profile.image.url }}">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">{{ photo.user }}</a>
+                <a class="mr-2" href="{% url 'user-photos' photo.user.id %}">{{ photo.user }}</a>
                 <small class="text-muted">{{ photo.creation_date|date:"F d, Y" }} </small>
             </div>
-            {% if tweet.user == user %}
+            {% if photo.user == user %}
                 <div>
-                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="#">Delete</a>
+                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'photo-delete' photo.id %}">Delete</a>
                 </div>
             {% endif %}
             <img class="img-fluid" src="{{ photo.path.url }}" alt="img"><br>
