@@ -20,7 +20,4 @@ urlpatterns = [
     path('', HomeView.as_view(), name='main'),
     path('like/<int:photo_id>/', LikeView.as_view(), name='like'),
     path('photo/<int:photo_id>/', PhotoDetailView.as_view(), name='photo-detail'),
-
 ]
-#TODO user photos view
-# TODO klasy autoadmina i flagi

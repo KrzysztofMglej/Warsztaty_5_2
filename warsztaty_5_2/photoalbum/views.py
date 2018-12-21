@@ -14,11 +14,11 @@ class HomeView(LoginRequiredMixin, View):
     class_form = PhotoAddForm
 
     def get(self, request):
-        photos = Photo.objects.all().order_by('-creation_date')
+        photos = Photo.objects.filter(deleted=False).order_by('-creation_date')
         return render(request, "photoalbum/main.html", {'form': self.class_form, 'photos': photos})
 
     def post(self, request):
-        photos = Photo.objects.all().order_by('-creation_date')
+        photos = Photo.objects.filter(deleted=False).order_by('-creation_date')
         form = PhotoAddForm(request.POST, request.FILES)
         user = self.request.user
         if form.is_valid():
@@ -43,7 +43,7 @@ class LikeView(View):
             existing_like.save()
         else:
             new_like = Likes.objects.create(like=True, photo_id=photo_id, user_id=request.user.id)
-        return redirect('main')
+        return redirect(self.request.META.get('HTTP_REFERER'), '/')
 
 
 class PhotoDetailView(LoginRequiredMixin, View):

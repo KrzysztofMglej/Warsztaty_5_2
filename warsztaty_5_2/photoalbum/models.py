@@ -11,20 +11,7 @@ class Photo(models.Model):
     deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.user} Profile'
-
-    # def save(self, force_insert=False, force_update=False, using=None,
-    #          update_fields=None):
-    #     super().save()
-    #     if not self.path_small:
-    #         print(self.path_small.path)
-    #         img = Image.open(self.path_small.path)
-    #         if img.height > 600 or img.width > 600:
-    #             output_size = (600, 600)
-    #             img.thumbnail(output_size)
-    #             print(self.path_small)
-    #             img.save(self.path_small)
-    #             # img.save(self.path.path)
+        return f'{self.user} - {self.content[0:30]}'
 
 
 class Comments(models.Model):
