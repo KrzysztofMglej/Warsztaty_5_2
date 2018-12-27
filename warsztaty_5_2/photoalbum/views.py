@@ -32,7 +32,7 @@ class HomeView(LoginRequiredMixin, View):
         return render(request, "photoalbum/main.html", {'form': form, 'photos': photos})
         
 
-class LikeView(View):
+class LikeView(LoginRequiredMixin, View):
 
     def get(self, request, photo_id):
         existing_like = Likes.objects.filter(user_id=request.user.id, photo_id=photo_id).first()
